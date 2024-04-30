@@ -48,7 +48,7 @@ async function transferTokens() {
   const tokenContract = new ethers.Contract(myTokenAddress,ContractAbi, signer);
 
   try {
-    const txResponse = await tokenContract.transfer("0x4054b1172b1f8a2f8fbcbd6bae0bb4accfe29ddb", number);
+    const txResponse = await tokenContract.transfer(dAppAddress, number);
     await txResponse.wait();
     // await fetchBalance
     setTransferStatus('Transfer successful!');
