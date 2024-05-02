@@ -151,46 +151,46 @@ const handleCircleClick = (tokenId: number, color: string) => {
 };
 
 return (
-  <div>
-     {!address && <h1>Connect to Wallet</h1>}
-      {!address && <button onClick={connectWallet}>Connect Wallet</button>}
-      {address && <>
-          <p>Connected Address: {address}</p>
-          <p>Units: {balance}</p>
-          <input
-            type="number"
-            value={number}
-            onChange={(e) => setNumber(Number(e.target.value))}
-            placeholder="Enter amount to transfer"
-          />
-          <button onClick={transferTokens}>Transfer Units</button>
-        </>}
+  <div className="App">
+    {!address ? (
+      <>
+        <h1>Connect to Wallet</h1>
+        <button onClick={connectWallet}>Connect Wallet</button>
+      </>
+    ) : (
+      <>
+        <p>Connected Address: {address}</p>
+        <p>Units: {balance}</p>
+        <input
+          type="number"
+          value={number}
+          onChange={(e) => setNumber(Number(e.target.value))}
+          placeholder="Enter amount to transfer"
+        />
+        <button onClick={transferTokens}>Transfer Units</button>
 
-        {address && <>
-          <p>Owned NFTs:</p>
-          <div>
-        
+        <h2>Owned NFTs:</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
           {nftData.map((nft, index) => (
-              <div key={index} style={{ display: 'inline-block', marginRight: '10px', position: 'relative' }}>
-                <div
-                  style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: nft.color, position: 'relative', cursor: 'pointer' }}
-                  onClick={() => handleCircleClick(nft.tokenId, nft.color)}
-                >
-                  <p style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white' }}>{nft.tokenId + ""}</p>
-                </div>
+            <div key={index} style={{ margin: '10px' }}>
+              <div
+                style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: nft.color, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                onClick={() => handleCircleClick(nft.tokenId, nft.color)}
+              >
+                <p style={{ color: 'white' }}>{nft.tokenId + ""}</p>
               </div>
-            ))}
-          </div>
-          {selectedNFT && <>
-            {/* <p>Selected NFT: {selectedNFT.tokenId + ", " + selectedNFT.color}</p> */}
+            </div>
+          ))}
+        </div>
+        {selectedNFT && (
+          <>
             <p>Selected NFT ID: {selectedNFT.tokenId + ""}</p>
             <p>Selected NFT Color: {selectedNFT.color}</p>
             <button onClick={transferNFT}>Transfer Selected NFT</button>
-            </>}
-
-        </>}
-      
-      
+          </>
+        )}
+      </>
+    )}
   </div>
 );
 }
