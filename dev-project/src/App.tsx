@@ -65,7 +65,28 @@ async function transferTokens() {
   }
 }
 
+async function transferNFT() {
+  if (!window.ethereum) return console.error('MetaMask is not installed!');
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const signer = await provider.getSigner();
+  const tokenContract = new ethers.Contract(myNFTAddress,NFTAbi, signer);
 
+  try {
+    if (!selectedNFT) {
+      console.error('No NFT selected for transfer');
+      return;
+    }
+
+    const txResponse = await tokenContract.transferFrom(address, dAppAddress, selectedNFT.tokenId);
+    await txResponse.wait();
+
+    // Update transfer status
+    setTransferStatus('NFT transfer successful!');
+  } catch (error) {
+    console.error('NFT Transfer failed:', error);
+    setTransferStatus('NFT Transfer failed!');
+  }
+}
 
 async function fetchBalance(account: string) {
   if (!window.ethereum) return console.error('MetaMask is not installed!');
@@ -155,11 +176,18 @@ return (
                   style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: nft.color, position: 'relative', cursor: 'pointer' }}
                   onClick={() => handleCircleClick(nft.tokenId, nft.color)}
                 >
-                  <p style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white' }}>{index}</p>
+                  <p style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white' }}>{nft.tokenId + ""}</p>
                 </div>
               </div>
             ))}
-      </div>
+          </div>
+          {selectedNFT && <>
+            {/* <p>Selected NFT: {selectedNFT.tokenId + ", " + selectedNFT.color}</p> */}
+            <p>Selected NFT ID: {selectedNFT.tokenId + ""}</p>
+            <p>Selected NFT Color: {selectedNFT.color}</p>
+            <button onClick={transferNFT}>Transfer Selected NFT</button>
+            </>}
+
         </>}
       
       
