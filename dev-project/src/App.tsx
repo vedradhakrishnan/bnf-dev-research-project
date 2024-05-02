@@ -146,7 +146,7 @@ useEffect(() => {
 }, [address]); // Refetch when address changes
 
 const handleCircleClick = (tokenId: number, color: string) => {
-  console.log(tokenId, color)
+  // console.log(tokenId, color)
   setSelectedNFT({ tokenId, color });
 };
 
@@ -159,12 +159,18 @@ return (
       </>
     ) : (
       <>
-        <p>Connected Address: {address}</p>
-        <p>Units: {balance}</p>
+        <h1>BnF Mentorship DApp</h1>
+        <p>Connected Address: {address.substring(0, 7)}... {address.substring(address.length - 5)}</p>
+        <p>Owned Units: {balance}</p>
         <input
-          type="number"
+          type="text"
+          pattern="[0-9]*"
           value={number}
-          onChange={(e) => setNumber(Number(e.target.value))}
+          onChange={(e) => {
+            const inputValue = Number(e.target.value);
+            setNumber(inputValue);
+          }}
+    
           placeholder="Enter amount to transfer"
         />
         <button onClick={transferTokens}>Transfer Units</button>
@@ -174,10 +180,11 @@ return (
           {nftData.map((nft, index) => (
             <div key={index} style={{ margin: '10px' }}>
               <div
-                style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: nft.color, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                className={`nft-circle ${selectedNFT && selectedNFT.tokenId === nft.tokenId ? 'selected' : ''}`}
+                style={{ backgroundColor: nft.color }}
                 onClick={() => handleCircleClick(nft.tokenId, nft.color)}
               >
-                <p style={{ color: 'white' }}>{nft.tokenId + ""}</p>
+                <p style={{ color: 'white', margin: 0 }}>{nft.tokenId + ""}</p>
               </div>
             </div>
           ))}

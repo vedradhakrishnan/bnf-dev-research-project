@@ -1,8 +1,8 @@
 .App {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Helvetica', sans-serif;
   text-align: center;
   padding: 20px;
-  background-color: #f4f4f4; /* Light grey background */
+  background-color: #f4f0ee; /* Light beige background */
   min-height: 100vh; /* Full viewport height */
   display: flex;
   flex-direction: column;
@@ -13,33 +13,57 @@
 input, button {
   margin: 10px;
   padding: 8px;
-  border: 2px solid #aaa; /* Slightly darker border */
+  border: 2px solid #aaa;
   border-radius: 5px;
   box-sizing: border-box;
 }
 
 input[type="number"], input[type="text"] {
-  width: 250px; /* Increased width */
+  width: 250px;
 }
 
 button {
   background-color: #0084ff; /* Bright blue */
   color: white;
   padding: 12px 18px;
-  margin: 8px 0;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #0056b3; /* Darker shade of blue on hover */
+  background-color: #0056b3;
+}
+
+.nft-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: outline 0.3s ease;
+}
+
+.nft-circle:hover {
+  outline: 5px solid rgba(255, 255, 255, 0.7); /* White outline on hover */
+}
+
+.nft-circle.selected {
+  outline: 10px solid #606060; /* Dark outline when selected */
+}
+
+.nft-circle p {
+  color: white;
+  margin: 0;
+  font-weight: bold; /* Make numbers bold */
 }
 
 .error {
-  color: #e74c3c; /* Bright red for errors */
+  color: #e74c3c;
 }
 
 .success {
-  color: #2ecc71; /* Green for success messages */
+  color: #2ecc71;
 }
