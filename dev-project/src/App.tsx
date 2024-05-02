@@ -5,6 +5,8 @@ import { BigNumberish, ethers } from "ethers";
 import type { MetaMaskInpageProvider } from "@metamask/providers";
 
 import ContractAbi from './abis/MyToken.json';
+import NFTAbi from './abis/MyNFT.json'
+
 
 
 function App() {
@@ -14,8 +16,12 @@ function App() {
 
   // const [receiverAddress, setReceiverAddress] = useState(''); // Address of NFTReceiver contract
   const [transferStatus, setTransferStatus] = useState(''); // To display transfer status messages
+  const [nftData, setNFTData] = useState<NFT[]>([]);
+  const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null); 
+
 
   const myTokenAddress = "0x5Dd7A2eEe39e950C11B54dE64Bdbc1BbF24C9A88";
+  const myNFTAddress = "0x25206de7911460dC55284B2A6fe0D74c84A725a2";
   const dAppAddress = "0x4054b1172b1f8a2f8fbcbd6bae0bb4accfe29ddb";
   // const nftReceiverAddress = "Your_NFTReceiver_Contract_Address"
 
@@ -45,6 +51,7 @@ async function transferTokens() {
   if (!window.ethereum) return console.error('MetaMask is not installed!');
   const provider = new ethers.BrowserProvider(window.ethereum);
   const signer = await provider.getSigner();
+  // console.log(signer, typeof signer)
   const tokenContract = new ethers.Contract(myTokenAddress,ContractAbi, signer);
 
   try {
@@ -57,6 +64,8 @@ async function transferTokens() {
     setTransferStatus('Transfer failed!');
   }
 }
+
+
 
 async function fetchBalance(account: string) {
   if (!window.ethereum) return console.error('MetaMask is not installed!');
@@ -76,30 +85,81 @@ async function fetchBalance(account: string) {
   }
 }
 
+async function fetchNFT(account: string) {
+  if (!window.ethereum) return console.error('MetaMask is not installed!');
+
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const contract = new ethers.Contract(myNFTAddress, NFTAbi, provider);
+  try {
+    const nftBalance = await contract.balanceOf(address);
+    // console.log(nftBalance)
+
+    const data: NFT[] = [];
+    for (let i = 0; i < Number(nftBalance); i++) {
+        try {
+            const nftID = await contract.tokenOfOwnerByIndex(address, i);
+            const nftColor = await contract.getTokenColor(nftID)
+            // console.log(nftID, nftColor)
+            data.push({tokenId:nftID, color:nftColor});
+        } catch (tokenIdError) {
+            console.error(`Failed to fetch token at index ${i}:`, tokenIdError);
+        }
+    }
+
+    setNFTData(data);
+  } catch (error) {
+    console.error("Failed to fetch balance: ", error);
+  }
+}
+
 useEffect(() => {
   if (address) {
     const intervalId = setInterval(() => {
       fetchBalance(address);
+      fetchNFT(address);
     }, 500); // specify the interval time in milliseconds
 
     // Clear the interval when the component unmounts or when address changes
     return () => clearInterval(intervalId);
   }
 }, [address]); // Refetch when address changes
+
+const handleCircleClick = (tokenId: number, color: string) => {
+  console.log(tokenId, color)
+  setSelectedNFT({ tokenId, color });
+};
+
 return (
   <div>
      {!address && <h1>Connect to Wallet</h1>}
       {!address && <button onClick={connectWallet}>Connect Wallet</button>}
       {address && <>
           <p>Connected Address: {address}</p>
-          <p>Token Balance: {balance}</p>
+          <p>Units: {balance}</p>
           <input
             type="number"
             value={number}
             onChange={(e) => setNumber(Number(e.target.value))}
             placeholder="Enter amount to transfer"
           />
-          <button onClick={transferTokens}>Transfer Tokens</button>
+          <button onClick={transferTokens}>Transfer Units</button>
+        </>}
+
+        {address && <>
+          <p>Owned NFTs:</p>
+          <div>
+        
+          {nftData.map((nft, index) => (
+              <div key={index} style={{ display: 'inline-block', marginRight: '10px', position: 'relative' }}>
+                <div
+                  style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: nft.color, position: 'relative', cursor: 'pointer' }}
+                  onClick={() => handleCircleClick(nft.tokenId, nft.color)}
+                >
+                  <p style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white' }}>{index}</p>
+                </div>
+              </div>
+            ))}
+      </div>
         </>}
       
       

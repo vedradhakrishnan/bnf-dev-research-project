@@ -5,4 +5,9 @@ declare global {
   interface Window{
     ethereum?:MetaMaskInpageProvider
   }
+
+  interface NFT {
+    tokenId: number;
+    color: string;
+  }
 }
