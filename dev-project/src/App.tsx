@@ -10,11 +10,11 @@ import NFTAbi from './abis/MyNFT.json'
 
 
 function App() {
-  const [number, setNumber] = useState(0); 
-  const [address, setAddress] = useState(''); 
-  const [balance, setBalance] = useState('0'); 
+  const [number, setNumber] = useState(0); //amount to transact
+  const [address, setAddress] = useState(''); // user's wallet address
+  const [balance, setBalance] = useState('0'); // user's token balance
 
-  const [transferStatus, setTransferStatus] = useState('');
+  const [transferStatus, setTransferStatus] = useState(''); // for debugging
   const [nftData, setNFTData] = useState<NFT[]>([]);
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null); 
 
@@ -27,6 +27,7 @@ function App() {
   async function connectWallet() {
     if (typeof window.ethereum !== 'undefined') {
         try {
+            // Request account access if needed
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }) as string[];;
             if (accounts == null || accounts.length === 0) {
               console.error('No account found');
@@ -76,6 +77,7 @@ function App() {
       const txResponse = await tokenContract.transferFrom(address, dAppAddress, selectedNFT.tokenId);
       await txResponse.wait();
 
+      // Update transfer status
       setTransferStatus('NFT transfer successful!');
     } catch (error) {
       console.error('NFT Transfer failed:', error);
@@ -91,7 +93,7 @@ function App() {
     try {
      
       const balance: BigNumberish = await contract.balanceOf(account);
-      const balanceString = balance.toString(); 
+      const balanceString = balance.toString(); // Convert BigNumber to string
       const balanceFormatted = ethers.formatUnits(balanceString, 0); 
       setBalance(balanceFormatted); 
     } catch (error) {
